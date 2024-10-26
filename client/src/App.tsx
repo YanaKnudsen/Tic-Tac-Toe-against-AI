@@ -1,44 +1,105 @@
 import {useEffect, useState} from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import"./GameStyle.scss"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faCircle } from '@fortawesome/free-regular-svg-icons'
 
 function App() {
-    const [board,setBoard]=useState<number[]>(Array(9).fill(0));
+    const [board,setBoard]=useState<string[]>(Array(9).fill(''));
+    const [isX,setIsX]=useState<boolean>(true);
+    const [status,setStatus]=useState<boolean>(true);
+
 
     useEffect(() => {
-       // setBoard(Array(9).fill(''));
     }, []);
 
     function resetGame():void{
-        console.log(board);
-      setBoard(Array(9).fill(''));
+        setBoard(Array(9).fill(''));
+        setIsX(true);
+        setStatus(true);
     }
     function handleCellClick(idx:number):void{
-        const newBoard:number[] = board;
-        newBoard[idx] = 1;
+        const newBoard:string[] = [...board];
+        newBoard[idx] =isX? "X":"O";
         setBoard(newBoard);
-        console.log(board);
+        setIsX(!isX);
+
 
     }
 
-   /* const handleCellClick = (index: number) => {
-        if (board[index] || calculateWinner(board)) return;
+    useEffect(() => {
+        const winner = calculateWinner(board);
+        console.log(winner);
+        if (winner){
+            console.log("winner is", winner)
+            setStatus(false);
 
-        const newBoard = [...board];
-        newBoard[index] = isXNext ? 'X' : 'O';
-        setBoard(newBoard);
-        const winner = calculateWinner(newBoard);
-
-        if (winner) {
-            setStatus(`Player ${winner} Wins!`);
-        } else if (!newBoard.includes('')) {
-            setStatus("It's a Draw!");
-        } else {
-            setIsXNext(!isXNext);
-            setStatus(`Player ${isXNext ? 'O' : 'X'}'s turn`);
         }
-    };*/
+    }, [board]);
+
+    useEffect(() => {
+        if(!status){
+           alert("Game over")
+        }
+    }, [status]);
+
+    function calculateWinner(currentBoard:string[]):string|null{
+        const winPatterns = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6],
+        ];
+
+        for (const pattern of winPatterns) {
+            const [a, b, c] = pattern;
+            if (board[a]=="X"&&board[b]=="X"&&board[c]=="X"){
+                return "X";
+            }
+            if (board[a]=="O"&&board[b]=="O"&&board[c]=="O"){
+                return "O";
+            }
+        }
+
+
+
+        return null;
+
+
+    }
+
+
+
+
+
+/*
+    const calculateWinner = (squares: string[]): string | null => {
+        const winPatterns = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6],
+        ];
+
+        for (const pattern of winPatterns) {
+            const [a, b, c] = pattern;
+            if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+                return squares[a];
+            }
+        }
+
+        return null;
+    };
+*/
+
 
   return (
 
@@ -49,7 +110,10 @@ function App() {
           {
               board.map((val,idx) => {
                   return(
-                  <div key={idx} className="cell" onClick={() => handleCellClick(idx)}/>
+                      <div key={idx} className="cell" onClick={() => handleCellClick(idx)}>
+                          {board[idx]==="X"?(<FontAwesomeIcon icon={faXmark} className="icon"/>):null}
+                          {board[idx]==="O"?(<FontAwesomeIcon icon={faCircle} className="icon"/>):null}
+                      </div>
                   )
               })
           }

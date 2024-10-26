@@ -37,11 +37,17 @@ body{
     border: solid 1px $purple600;
    // border-radius: $borderS;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns:1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
     grid-gap: 1px;
     .cell{
       background-color: $purple900;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .icon{
+        height: 50px;
+      }
     }
 
   }
