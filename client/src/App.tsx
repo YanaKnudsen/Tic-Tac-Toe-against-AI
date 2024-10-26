@@ -3,6 +3,7 @@ import"./GameStyle.scss"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import { faCircle } from '@fortawesome/free-regular-svg-icons'
+import AxiosInstance from "./axios/AxiosInstance.tsx"
 
 function App() {
     const [board,setBoard]=useState<string[]>(Array(9).fill(''));
@@ -20,9 +21,13 @@ function App() {
     }
     function handleCellClick(idx:number):void{
         const newBoard:string[] = [...board];
-        newBoard[idx] =isX? "X":"O";
-        setBoard(newBoard);
-        setIsX(!isX);
+        console.log(idx);
+        if (newBoard[idx]==""){
+            newBoard[idx] =isX? "X":"O";
+            setIsX(!isX);
+            setBoard(newBoard);
+
+        }
 
 
     }
@@ -33,15 +38,48 @@ function App() {
         if (winner){
             console.log("winner is", winner)
             setStatus(false);
-
+        }
+        else if (!board.includes('')){
+            console.log("no one wins")
+            setStatus(false);
+        }
+        else if (!isX){
+            makeAIMove();
         }
     }, [board]);
 
     useEffect(() => {
         if(!status){
-           alert("Game over")
+            alert("Game over")
+            resetGame();
         }
     }, [status]);
+
+    function makeAIMove():void{
+        AxiosInstance.post('/aiMove', {board},{withCredentials:true})
+            .then(res => {
+            })
+            .catch(err => {
+                // Handle errors
+                console.error(err);
+            });
+    }
+
+    /*
+     const makeAIMove = async () => {
+    const prompt = generatePrompt(board);
+    const aiMove = await getAIMove(prompt);
+
+    if (aiMove !== null) {
+      const newBoard = [...board];
+      newBoard[aiMove] = AI_PLAYER;
+      setBoard(newBoard);
+      setIsXNext(true);
+    }
+  };
+
+    */
+
 
     function calculateWinner(currentBoard:string[]):string|null{
         const winPatterns = [
