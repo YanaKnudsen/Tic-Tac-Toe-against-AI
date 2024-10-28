@@ -45,10 +45,9 @@ function App() {
 
     useEffect(() => {
         const winner = calculateWinner(board);
-        console.log(winner);
         if (winner){
+            isX?setWinnerName("O"):setWinnerName("X");
             setStatus(false);
-            setWinnerName(isX?"X":"O");
         }
         else if (!board.includes('')){
             console.log("no one wins")
@@ -60,8 +59,9 @@ function App() {
     }, [board]);
 
     useEffect(() => {
+        console.log("winner",winnerName)
         if(!status){
-            alert(`Game over. Winner is ${!winnerName}`);
+            alert(`Game over. Winner is ${winnerName}`);
             resetGame();
         }
     }, [status]);
